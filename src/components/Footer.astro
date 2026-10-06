@@ -1,0 +1,11 @@
+---
+import { site, t, url } from "../lib/site";
+---
+<footer class="site-footer" lang={t.language}>
+  <div><strong>{site.author}</strong><span>{site.footerText || t.footer_thanks}</span></div>
+  <nav aria-label={t.footer_links}>
+    {site.links.map((item) => <a href={item.url}>{item.name} ↗</a>)}
+    <a href={url("/atom.xml")}>RSS ↗</a>
+    {site.showPoweredBy && <a href="https://github.com/geoqiao/escaping">{t.powered_by}</a>}
+  </nav>
+</footer>

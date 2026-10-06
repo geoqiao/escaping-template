@@ -1,0 +1,15 @@
+---
+import EntryList from "../../components/EntryList.astro";
+import Base from "../../layouts/Base.astro";
+import { t, tags, url } from "../../lib/site";
+
+export function getStaticPaths() {
+  return tags.map((tag) => ({ params: { key: tag.key }, props: { tag } }));
+}
+
+const { tag } = Astro.props;
+---
+<Base title={tag.name} path={tag.path} section="/tags/">
+<div class="page-heading"><a class="breadcrumb" href={url("/tags/")}>← {t.tags}</a><h1 class="topic-heading">{tag.name}</h1><p>{t.related_articles.replace("{count}", String(tag.posts.length))}</p></div>
+<EntryList posts={tag.posts} />
+</Base>

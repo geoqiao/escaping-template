@@ -1,1 +1,48 @@
-{}
+# Everything here is optional. Left empty, the site takes its title and author
+# from the owner of this repository and its address from GitHub Pages.
+#
+# escaping reads github, about and security; the site reads the rest.
+
+# github:
+#   allowed_authors: [alice]   # who may publish; default: the repository owner
+# about:
+#   issue_number: 42           # default: the oldest published About Issue
+
+# site:
+#   title: My notes
+#   author: Alice
+#   description: Notes on tools and learning.
+#   language: zh               # "zh" also turns the interface text to Chinese
+#   url: https://example.com/  # needed only when the site is not on GitHub Pages
+#   navigation:
+#     items:
+#       - {name: Blog, url: /blog/}
+#       - {name: About, url: /about/}
+
+# profile:
+#   bio: One or two lines about you, shown on Home.
+#   avatar: https://example.com/me.png   # default: your GitHub avatar
+#   links:
+#     - {name: GitHub, url: https://github.com/alice}
+
+# paths:
+#   page_size: 10              # posts on one page of the Blog
+
+# comments:
+#   enabled: true              # needs the utterances app on this repository
+
+# seo:
+#   google_search_console: ""
+#   social_image: https://example.com/card.png
+#   social_image_alt: ""
+
+# theme:
+#   options:
+#     tagline: Writing about tools and learning
+#     featured_posts: [12, 7]  # Issue numbers, shown first on Home
+#     footer_text: ""
+#     show_powered_by: true
+#     accent_color: "#a72f6a"
+#     accent_color_dark: "#e58bb6"
+#     comments_theme: github-light
+#     comments_theme_mode: auto  # auto follows light/dark; fixed uses comments_theme

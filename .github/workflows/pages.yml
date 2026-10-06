@@ -1,4 +1,4 @@
-name: Build site
+name: Publish site
 
 'on':
   issues:
@@ -8,7 +8,7 @@ name: Build site
 
 permissions: {}
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -40,18 +40,39 @@ jobs:
       issues: read
       pages: read
     outputs:
-      skipped-issues: ${{ steps.site.outputs.skipped-issues }}
+      skipped-issues: ${{ steps.content.outputs.skipped-issues }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - id: site
-        uses: geoqiao/escaping@v0.5.0 # Or a full commit SHA.
+      # Fails here when Settings → Pages → Source is not "GitHub Actions".
+      - id: pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - name: Export the Issues as Markdown
+        id: content
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          status=0
+          uvx escaping-site@0.6.0 export --config config.yaml --output content || status=$?
+          # 2: exported, but some Issues were skipped; the last step reports them.
+          if [ "$status" -eq 2 ]; then exit 0; fi
+          exit "$status"
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          config: config.yaml
+          node-version: "24"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build the site
+        env:
+          # Used when config.yaml has no site.url.
+          SITE_URL: ${{ steps.pages.outputs.base_url }}
+        run: pnpm build
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: ${{ steps.site.outputs.output }}
+          path: dist
 
   deploy:
     needs: build

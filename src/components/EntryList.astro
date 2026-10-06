@@ -1,0 +1,25 @@
+---
+import type { Entry } from "../lib/content";
+import { t, url } from "../lib/site";
+import TagLinks from "./TagLinks.astro";
+
+interface Props {
+  posts: Entry[];
+  descriptions?: boolean;
+}
+
+const { posts, descriptions = false } = Astro.props;
+---
+<div class:list={["entry-list", descriptions && "entry-list--described"]}>
+  {posts.map((post) => (
+    <article class="entry">
+      <time datetime={post.createdDate}>{post.createdDate}</time>
+      <div class="entry-copy">
+        <h2><a href={url(post.path)}>{post.title} <span class="entry-arrow" aria-hidden="true">↗</span></a></h2>
+        {descriptions && post.description && <p class="entry-description">{post.description}</p>}
+        <TagLinks tags={post.tags} />
+      </div>
+    </article>
+  ))}
+  {posts.length === 0 && <p class="empty-state">{t.empty_writing}</p>}
+</div>

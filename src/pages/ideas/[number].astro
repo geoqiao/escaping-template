@@ -1,0 +1,11 @@
+---
+import Article from "../../components/Article.astro";
+import { ideas } from "../../lib/site";
+
+export function getStaticPaths() {
+  return ideas.map((idea) => ({ params: { number: String(idea.issueNumber) }, props: { idea } }));
+}
+
+const { idea } = Astro.props;
+---
+<Article entry={idea} />

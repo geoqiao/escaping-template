@@ -1,0 +1,15 @@
+---
+import type { Tag } from "../lib/content";
+import { t, tagPath, url } from "../lib/site";
+
+interface Props {
+  tags: Tag[];
+  /** Blog tags lead to their archive; Idea tags are only shown. */
+  linked?: boolean;
+}
+
+const { tags, linked = true } = Astro.props;
+---
+{tags.length > 0 && (
+  <ul class="tag-links" aria-label={t.tags_label}>{tags.map((tag) => <li>{linked ? <a href={url(tagPath(tag))}>{tag.name}</a> : <span>{tag.name}</span>}</li>)}</ul>
+)}

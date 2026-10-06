@@ -1,0 +1,17 @@
+/* Code colors. src/lib/markdown.ts colors fenced code at build time and writes
+ * both palettes on each token: Xcode's for light, GitHub's for dark.
+ * style.css owns the code surface and the inherited ink. */
+.syntax span { color: var(--shiki-light); }
+:root[data-theme="dark"] .syntax span {
+  color: var(--shiki-dark);
+  font-style: var(--shiki-dark-font-style, inherit);
+  font-weight: var(--shiki-dark-font-weight, inherit);
+}
+/* Without JavaScript there is no data-theme; follow the system appearance. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .syntax span {
+    color: var(--shiki-dark);
+    font-style: var(--shiki-dark-font-style, inherit);
+    font-weight: var(--shiki-dark-font-weight, inherit);
+  }
+}

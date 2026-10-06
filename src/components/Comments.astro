@@ -1,0 +1,19 @@
+---
+import { site, t, url } from "../lib/site";
+
+interface Props {
+  /** The Issue the page was written in; its comments are the page's comments. */
+  issueNumber: number;
+}
+
+const { issueNumber } = Astro.props;
+---
+<section class="comments-section" aria-labelledby="comments-title">
+  <div class="section-heading"><h2 id="comments-title">{t.conversation}</h2><a href={"https://github.com/" + site.repo + "/issues/" + issueNumber}>GitHub ↗</a></div>
+  <p class="muted">{t.comments_intro}</p>
+  <div id="comments-container" data-issue-number={issueNumber} data-comments-repo={site.comments.repo} data-source-repo={site.repo} data-comments-theme={site.comments.theme} data-comments-theme-mode={site.comments.themeMode} data-blog-theme-default="light" data-unavailable-text={t.comments_unavailable} data-issue-link-text={t.comments_view_on_github}>
+    <p class="comments-loading" role="status">{t.comments_loading}</p>
+  </div>
+  <noscript><p>{t.comments_noscript}</p></noscript>
+</section>
+<script is:inline src={url("/assets/escaping/comments.js")} defer></script>

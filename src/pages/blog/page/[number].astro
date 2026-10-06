@@ -1,0 +1,14 @@
+---
+import BlogArchive from "../../../components/BlogArchive.astro";
+import { archives } from "../../../lib/site";
+
+export function getStaticPaths() {
+  return archives.slice(1).map((archive) => ({
+    params: { number: String(archive.number) },
+    props: { archive },
+  }));
+}
+
+const { archive } = Astro.props;
+---
+<BlogArchive archive={archive} />

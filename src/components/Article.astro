@@ -1,0 +1,61 @@
+---
+import type { Entry } from "../lib/content";
+import Base from "../layouts/Base.astro";
+import { absolute } from "../lib/settings";
+import { render, site, t, url } from "../lib/site";
+import Comments from "./Comments.astro";
+import Mermaid from "./Mermaid.astro";
+import TagLinks from "./TagLinks.astro";
+
+interface Props {
+  entry: Entry;
+  /** The neighbours of a Blog post; an Idea has none. */
+  newer?: Entry;
+  older?: Entry;
+}
+
+const { entry, newer, older } = Astro.props;
+const post = entry.type === "blog";
+const section = post ? "/blog/" : "/ideas/";
+const sectionLabel = post ? t.blog : t.ideas;
+const body = await render(entry.markdown);
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": post ? "BlogPosting" : "Article",
+  headline: entry.title,
+  description: entry.description,
+  url: absolute(entry.path),
+  datePublished: entry.publishedAt,
+  dateModified: entry.updatedAt,
+  author: { "@type": "Person", name: site.author },
+};
+---
+<Base kind={post ? "post" : "idea"} title={entry.title} description={entry.description} path={entry.path} section={section} jsonLd={jsonLd}>
+<article class="article-page">
+  <header class="article-heading">
+    <a class="breadcrumb" href={url(section)}>← {sectionLabel}</a>
+    <h1>{entry.title}</h1>
+    <div class="article-meta"><span>{site.author}</span><time datetime={entry.createdDate}>{entry.createdDate}</time>{site.comments.enabled && <a href="#comments-title">{t.discuss} ↓</a>}</div>
+    <TagLinks tags={entry.tags} linked={post} />
+  </header>
+  <div class="reading-layout">
+    <div class="reading-main">
+      <div class="post-content" set:html={body} />
+      {post ? (newer || older) && (
+        <nav class="article-end" aria-label={t.article_navigation}>
+          <span aria-hidden="true">↳</span>
+          {newer && <a rel="prev" href={url(newer.path)} aria-label={t.previous + ": " + newer.title}>{t.previous}</a>}
+          {older && <a rel="next" href={url(older.path)} aria-label={t.next + ": " + older.title}>{t.next}</a>}
+        </nav>
+      ) : (
+        <div class="article-end"><span aria-hidden="true">↳</span><a href={url(section)}>{t.back_to_section.replace("{section}", sectionLabel)}</a><a href="#top">{t.back_to_top} ↑</a></div>
+      )}
+      {site.comments.enabled && <Comments issueNumber={entry.issueNumber} />}
+    </div>
+    <aside class="reading-margin" hidden>
+      <details class="toc"><summary>{t.on_this_page}</summary><nav data-toc aria-label={t.on_this_page}></nav></details>
+    </aside>
+  </div>
+</article>
+<Mermaid />
+</Base>

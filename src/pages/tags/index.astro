@@ -1,0 +1,11 @@
+---
+import Base from "../../layouts/Base.astro";
+import { t, tags, url } from "../../lib/site";
+---
+<Base title={t.tags} path="/tags/" section="/tags/">
+<div class="page-heading"><p class="eyebrow">{t.tags_eyebrow}</p><h1>{t.tags}<span class="heading-dot" aria-hidden="true">.</span></h1><p>{t.tags_caption}</p></div>
+<ul class="topic-index">
+  {tags.map((tag) => <li><a href={url(tag.path)}><span>{tag.name}</span><span class="topic-count">{tag.posts.length} <span aria-hidden="true">↗</span></span></a></li>)}
+  {tags.length === 0 && <li class="empty-state">{t.tags_empty}</li>}
+</ul>
+</Base>

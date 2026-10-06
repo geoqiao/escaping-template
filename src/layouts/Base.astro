@@ -1,0 +1,73 @@
+---
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import Search from "../components/Search.astro";
+import { scriptJson } from "../lib/html";
+import { absolute } from "../lib/settings";
+import { site, t, url } from "../lib/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** The page's address inside the site. A page without one is kept out of search engines. */
+  path?: string;
+  kind?: "home" | "post" | "idea" | "page";
+  /** The menu entry this page belongs to, e.g. "/blog/". */
+  section?: string;
+  jsonLd?: unknown;
+}
+
+const { title = site.title, description = site.description, path, kind = "page", section = "/", jsonLd } = Astro.props;
+const canonical = path ? absolute(path) : "";
+const accent = [
+  site.accentColor && ":root { --accent: " + site.accentColor + "; }",
+  site.accentColorDark && ':root[data-theme="dark"] { --accent: ' + site.accentColorDark + "; }",
+  site.accentColorDark && "@media (prefers-color-scheme: dark) { :root:not([data-theme]) { --accent: " + site.accentColorDark + "; } }",
+].filter(Boolean).join("\n");
+---
+<!DOCTYPE html>
+<html lang={site.language}>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{title}{title !== site.title && " · " + site.title}</title>
+  <meta name="description" content={description}>
+  {canonical ? <link rel="canonical" href={canonical}> : <meta name="robots" content="noindex">}
+  <meta property="og:site_name" content={site.title}>
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  {canonical && <meta property="og:url" content={canonical}>}
+  <meta property="og:type" content={kind === "post" || kind === "idea" ? "article" : "website"}>
+  {site.seo.socialImage ? (
+    <>
+      <meta property="og:image" content={site.seo.socialImage}>
+      {site.seo.socialImageAlt && <meta property="og:image:alt" content={site.seo.socialImageAlt}>}
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="twitter:image" content={site.seo.socialImage}>
+      {site.seo.socialImageAlt && <meta name="twitter:image:alt" content={site.seo.socialImageAlt}>}
+    </>
+  ) : <meta name="twitter:card" content="summary">}
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  {site.seo.googleSearchConsole && <meta name="google-site-verification" content={site.seo.googleSearchConsole}>}
+  <link rel="icon" href={site.avatar || url("/assets/images/favicon.png")}>
+  <link rel="alternate" type="application/atom+xml" title={site.title} href={url("/atom.xml")}>
+  <script is:inline src={url("/assets/js/appearance.js")}></script>
+  <link rel="stylesheet" href={url("/assets/css/style.css")}>
+  <link rel="stylesheet" href={url("/assets/css/syntax.css")}>
+  <link rel="stylesheet" href={url("/assets/css/search.css")}>
+  {accent && <style is:inline set:html={accent}></style>}
+  <script is:inline src={url("/assets/js/site.js")} data-copy-code={t.copy_code} data-copied={t.copied} data-copy-failed={t.copy_failed} defer></script>
+  <script is:inline src={url("/assets/js/search.js")} data-search-index={url("/search.json")} defer></script>
+  {jsonLd && <script is:inline type="application/ld+json" set:html={scriptJson(jsonLd)}></script>}
+</head>
+<body id="top" class={kind === "home" ? "home" : undefined}>
+  <a class="skip-link" href="#main-content" lang={t.language}>{t.skip_to_content}</a>
+  <Header home={kind === "home"} section={section} />
+  <Search />
+  <div class="site-surface">
+    <main id="main-content" tabindex="-1"><slot /></main>
+    <Footer />
+  </div>
+</body>
+</html>

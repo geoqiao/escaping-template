@@ -1,0 +1,20 @@
+---
+import Base from "../layouts/Base.astro";
+import { t, url, type Archive } from "../lib/site";
+import EntryList from "./EntryList.astro";
+
+interface Props {
+  archive: Archive;
+}
+
+const { archive } = Astro.props;
+---
+<Base title={archive.number === 1 ? t.blog : t.blog + " · " + archive.number} path={archive.path} section="/blog/">
+<div class="page-heading blog-heading"><p class="eyebrow">{t.blog_eyebrow}</p><h1>{t.blog}<span class="heading-dot" aria-hidden="true">.</span></h1><div class="page-caption"><p>{t.blog_caption}</p><a href={url("/tags/")}>{t.explore_by_topic} ↗</a></div></div>
+<EntryList posts={archive.posts} descriptions />
+<nav class="pagination" aria-label={t.blog_pagination}>
+  {archive.prev ? <a rel="prev" href={url(archive.prev)}>{t.newer}</a> : <span></span>}
+  <span>{archive.number} / {archive.total}</span>
+  {archive.next ? <a rel="next" href={url(archive.next)}>{t.older}</a> : <span></span>}
+</nav>
+</Base>

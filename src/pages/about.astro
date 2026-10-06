@@ -1,0 +1,18 @@
+---
+import Comments from "../components/Comments.astro";
+import Mermaid from "../components/Mermaid.astro";
+import Base from "../layouts/Base.astro";
+import { about, render, site, t, url } from "../lib/site";
+
+// The About Issue when one is published; otherwise the bio from config.yaml.
+const body = about ? await render(about.markdown) : "";
+---
+<Base title={about?.title ?? t.about} description={about?.description || site.bio || site.description} path="/about/" section="/about/">
+<article class="about-page">
+  <header class="about-header"><p class="eyebrow muted">{t.about}</p><h1>{about?.title ?? site.author}</h1></header>
+  {about ? <div class="post-content about-story" set:html={body} /> : <div class="post-content about-story"><p>{site.bio || t.about_empty}</p></div>}
+  <div class="article-end"><a href={url("/")}>{t.back_home}</a><a href="#top">{t.back_to_top} ↑</a></div>
+  {site.comments.enabled && about && <Comments issueNumber={about.issueNumber} />}
+</article>
+{about && <Mermaid />}
+</Base>

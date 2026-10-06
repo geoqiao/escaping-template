@@ -1,0 +1,54 @@
+---
+import type { Entry } from "../lib/content";
+import Base from "../layouts/Base.astro";
+import { about, featuredPosts, posts, site, t, url } from "../lib/site";
+
+const recent = posts.slice(0, 5);
+const [beforeBlog, afterBlog] = t.home_intro.split("{blog}");
+const [beforeAbout, afterAbout] = (afterBlog ?? "").split("{about}");
+const lists: { id: string; title: string; posts: Entry[]; more: boolean }[] = [
+  ...(featuredPosts.length ? [{ id: "featured-title", title: t.featured, posts: featuredPosts, more: false }] : []),
+  { id: "recent-title", title: t.recent_articles, posts: recent, more: recent.length > 0 },
+];
+---
+<Base kind="home" path="/">
+<div class="home-light" aria-hidden="true">
+  <svg viewBox="0 0 640 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="currentColor" stroke-width="5" stroke-linecap="round">
+      <path d="M660 20C480 100 470 220 260 350M560 100C490 60 430 70 340 40M480 200C430 160 330 200 230 160M390 280C410 350 320 410 310 470"/>
+    </g>
+    <g fill="currentColor">
+      <ellipse cx="492" cy="88" rx="60" ry="14" transform="rotate(25 492 88)"/>
+      <ellipse cx="407" cy="52" rx="56" ry="13" transform="rotate(-12 407 52)"/>
+      <ellipse cx="540" cy="166" rx="64" ry="16" transform="rotate(-55 540 166)"/>
+      <ellipse cx="411" cy="184" rx="62" ry="15" transform="rotate(18 411 184)"/>
+      <ellipse cx="308" cy="165" rx="60" ry="14" transform="rotate(-15 308 165)"/>
+      <ellipse cx="463" cy="263" rx="66" ry="16" transform="rotate(-48 463 263)"/>
+      <ellipse cx="363" cy="360" rx="62" ry="14" transform="rotate(-60 363 360)"/>
+      <ellipse cx="284" cy="325" rx="56" ry="13" transform="rotate(20 284 325)"/>
+      <ellipse cx="342" cy="425" rx="48" ry="12" transform="rotate(-38 342 425)"/>
+    </g>
+  </svg>
+</div>
+<header class="home-heading">
+  <div class="home-title">
+    <h1>{site.title}</h1>
+    {site.avatar && <img class="home-avatar" src={site.avatar} alt="" width="64" height="64">}
+  </div>
+  <div class="home-intro">
+    {site.tagline && <p class="home-tagline">{site.tagline}</p>}
+    {site.bio && <p>{site.bio}</p>}
+    <p lang={t.language}>{beforeBlog}<a class="intro-link" href={url("/blog/")}>{t.home_intro_blog}</a>{beforeAbout}{about || site.bio ? <a class="intro-link" href={url("/about/")}>{t.home_intro_about}</a> : t.home_intro_about}{afterAbout}</p>
+  </div>
+</header>
+{lists.map((list) => (
+  <section class="home-section" aria-labelledby={list.id}>
+    <div class="section-heading"><h2 id={list.id}>{list.title}</h2>{list.more && <a href={url("/blog/")}>{t.all_articles} <span aria-hidden="true">↗</span></a>}</div>
+    {list.posts.length ? (
+      <ul class="home-writing">
+        {list.posts.map((post) => <li><a href={url(post.path)}><span>{post.title}</span><time datetime={post.createdDate}>{post.createdDate}</time></a></li>)}
+      </ul>
+    ) : <p class="muted">{t.no_writing_yet}</p>}
+  </section>
+))}
+</Base>

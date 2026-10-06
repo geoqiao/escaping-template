@@ -1,0 +1,10 @@
+# The site Astro builds, its cache and dependencies
+/dist/
+/.astro/
+node_modules/
+
+# The Markdown that escaping-site export writes from your Issues. Remove this
+# line when a workflow commits the export (see README, "Other hosts").
+/content/
+
+.DS_Store
